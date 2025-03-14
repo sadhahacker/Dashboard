@@ -16,5 +16,10 @@
 @stop
 
 @section('js')
-    <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
+    <script>
+        Echo.channel('binance-balance')
+            .listen('balance.update', (e) => {
+                console.log(e);
+            });
+    </script>
 @stop

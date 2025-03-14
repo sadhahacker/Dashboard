@@ -44,11 +44,11 @@ use React\EventLoop\Loop;
 
 use Exception;
 
-$version = '4.4.67';
+$version = '4.4.66';
 
 class Exchange extends \ccxt\Exchange {
 
-    const VERSION = '4.4.67';
+    const VERSION = '4.4.66';
 
     public $browser;
     public $marketsLoading = null;
@@ -3436,7 +3436,7 @@ class Exchange extends \ccxt\Exchange {
                 try {
                     return Async\await($this->fetch($request['url'], $request['method'], $request['headers'], $request['body']));
                 } catch (Exception $e) {
-                    if ($e instanceof OperationFailed) {
+                    if ($e instanceof NetworkError) {
                         if ($i < $retries) {
                             if ($this->verbose) {
                                 $this->log('Request failed with the error => ' . (string) $e . ', retrying ' . ($i . (string) 1) . ' of ' . (string) $retries . '...');
@@ -3444,10 +3444,10 @@ class Exchange extends \ccxt\Exchange {
                             if (($retryDelay !== null) && ($retryDelay !== 0)) {
                                 Async\await($this->sleep($retryDelay));
                             }
-                        } else {
-                            throw $e;
+                            // continue; //check this
                         }
-                    } else {
+                    }
+                    if ($i >= $retries) {
                         throw $e;
                     }
                 }

@@ -127,7 +127,7 @@ class tradeogre extends Exchange {
                         'orders/{market}' => 1,
                         'ticker/{market}' => 1,
                         'history/{market}' => 1,
-                        'chart/{interval}/{market}' => 1,
+                        'chart/{interval}/{market}/{timestamp}' => 1,
                     ),
                 ),
                 'private' => array(
@@ -442,7 +442,6 @@ class tradeogre extends Exchange {
          * @param {int} [$since] timestamp in ms of the earliest candle to fetch
          * @param {int} [$limit] the maximum amount of candles to fetch
          * @param {array} [$params] extra parameters specific to the exchange API endpoint
-         * @param {int} [$params->until] timestamp of the latest candle in ms
          * @return {int[][]} A list of candles ordered, open, high, low, close, volume
          */
         $this->load_markets();
@@ -451,12 +450,12 @@ class tradeogre extends Exchange {
             'market' => $market['id'],
             'interval' => $this->safe_string($this->timeframes, $timeframe, $timeframe),
         );
-        $until = $this->safe_integer($params, 'until');
-        if ($until !== null) {
-            $params = $this->omit($params, 'until');
-            $request['timestamp'] = $until;
+        if ($since === null) {
+            throw new BadRequest($this->id . ' fetchOHLCV requires a $since argument');
+        } else {
+            $request['timestamp'] = $since;
         }
-        $response = $this->publicGetChartIntervalMarket ($this->extend($request, $params));
+        $response = $this->publicGetChartIntervalMarketTimestamp ($this->extend($request, $params));
         //
         //     array(
         //         array(

@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
-use \ccxt\pro;
+use ccxt\pro\binance;
 use Illuminate\Console\Command;
+use React\Async;
+use React\EventLoop\Loop;
 
 class WatchBalance extends Command
 {
@@ -12,7 +14,7 @@ class WatchBalance extends Command
 
     public function handle()
     {
-        $exchange = new \ccxt\pro\binance([
+        $exchange = new binance([
             'apiKey' => env('BINANCE_API_KEY'),
             'secret' => env('BINANCE_API_SECRET'),
             'options' => [
@@ -23,19 +25,18 @@ class WatchBalance extends Command
 
         $params = []; // Define any additional parameters here
 
-        if ($exchange->has['watchBalance']) {
-            \ccxt\pro\binance::execute_and_run(function () use ($exchange, $params) {
-                while (true) {
-                    try {
-                        $balance = yield $exchange->watch_balance($params);
-                        echo date('c') . ' ' . json_encode($balance, JSON_PRETTY_PRINT) . "\n";
-                    } catch (\Exception $e) {
-                        echo get_class($e) . ' ' . $e->getMessage() . "\n";
-                    }
+        Async\async(function () use ($exchange, $params) {
+            while (true) {
+                try {
+                    $balance = yield $exchange->watch_balance($params);
+                    echo date('c'), ' ', json_encode($balance), "\n";
+                } catch (\Exception $e) {
+                    echo get_class($e), ' ', $e->getMessage(), "\n";
+                    sleep(5); // Prevent excessive retries
                 }
-            });
-        } else {
-            echo "WebSocket support for balance watching is not available on this exchange.\n";
-        }
+            }
+        })();
+
+        Loop::run();
     }
 }

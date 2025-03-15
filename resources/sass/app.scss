@@ -1,8 +1,8 @@
 // Fonts
 @import url('https://fonts.bunny.net/css?family=Nunito');
 
-// Variables
-@import 'variables';
+@import "../../resources/vendor/fontawesome-free/css/all.min.css";
 
-// Bootstrap
-@import 'bootstrap/scss/bootstrap';
+@import "../../resources/vendor/overlayScrollbars/css/OverlayScrollbars.min.css";
+
+@import "../../resources/vendor/adminlte/dist/css/adminlte.css";

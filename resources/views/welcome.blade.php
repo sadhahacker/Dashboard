@@ -16,10 +16,10 @@
 @stop
 
 @section('js')
-    <script>
+    <script type="module">
         Echo.channel('binance-balance')
             .listen('balance.update', (e) => {
-                console.log(e);
-            });
+                console.log("Hello")
+            })
     </script>
 @stop

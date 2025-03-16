@@ -54,6 +54,7 @@ return array(
     'React\\Cache\\' => array($vendorDir . '/react/cache/src'),
     'React\\Async\\' => array($vendorDir . '/react/async/src'),
     'Ratchet\\RFC6455\\' => array($vendorDir . '/ratchet/rfc6455/src'),
+    'Ratchet\\Client\\' => array($vendorDir . '/ratchet/pawl/src'),
     'Ramsey\\Uuid\\' => array($vendorDir . '/ramsey/uuid/src'),
     'Ramsey\\Collection\\' => array($vendorDir . '/ramsey/collection/src'),
     'Pusher\\' => array($vendorDir . '/pusher/pusher-php-server/src'),

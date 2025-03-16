@@ -9,15 +9,15 @@ class ComposerStaticInit2fb19ee16767dc883e00bd6bd54af521
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
+        'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
-        'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
         '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         '662a729f963d39afe703c9d9b7ab4a8c' => __DIR__ . '/..' . '/symfony/polyfill-php83/bootstrap.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
-        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '35a6ad97d21e794e7e22a17d806652e4' => __DIR__ . '/..' . '/nunomaduro/termwind/src/Functions.php',
@@ -38,6 +38,7 @@ class ComposerStaticInit2fb19ee16767dc883e00bd6bd54af521
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
+        '3be16222a6efa6dd226a219eaaff823b' => __DIR__ . '/..' . '/ratchet/pawl/src/functions_include.php',
         '88254829cb0eed057c30eaabb6d8edc4' => __DIR__ . '/..' . '/amphp/amp/src/functions.php',
         '429ae5f14a13a9076791c19422e10996' => __DIR__ . '/..' . '/amphp/amp/src/Future/functions.php',
         'c8601a4144b50a7b548da082c89c4dc1' => __DIR__ . '/..' . '/amphp/amp/src/Internal/functions.php',
@@ -47,7 +48,6 @@ class ComposerStaticInit2fb19ee16767dc883e00bd6bd54af521
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         'c4e03ecd470d2a87804979c0a8152284' => __DIR__ . '/..' . '/react/async/src/functions_include.php',
         '380e145354eec021bb1f5e54465a7ef0' => __DIR__ . '/..' . '/ccxt/ccxt.php',
-        '966545d6aaf671c6a040963a9869873d' => __DIR__ . '/..' . '/ccxt/php/pro/base/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -116,6 +116,7 @@ class ComposerStaticInit2fb19ee16767dc883e00bd6bd54af521
             'React\\Cache\\' => 12,
             'React\\Async\\' => 12,
             'Ratchet\\RFC6455\\' => 16,
+            'Ratchet\\Client\\' => 15,
             'Ramsey\\Uuid\\' => 12,
             'Ramsey\\Collection\\' => 18,
         ),
@@ -409,6 +410,10 @@ class ComposerStaticInit2fb19ee16767dc883e00bd6bd54af521
         array (
             0 => __DIR__ . '/..' . '/ratchet/rfc6455/src',
         ),
+        'Ratchet\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ratchet/pawl/src',
+        ),
         'Ramsey\\Uuid\\' => 
         array (
             0 => __DIR__ . '/..' . '/ramsey/uuid/src',
@@ -687,6 +692,8 @@ class ComposerStaticInit2fb19ee16767dc883e00bd6bd54af521
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
+        'Binance\\API' => __DIR__ . '/..' . '/jaggedsoft/php-binance-api/php-binance-api.php',
+        'Binance\\RateLimiter' => __DIR__ . '/..' . '/jaggedsoft/php-binance-api/php-binance-api-rate-limiter.php',
         'Brick\\Math\\BigDecimal' => __DIR__ . '/..' . '/brick/math/src/BigDecimal.php',
         'Brick\\Math\\BigInteger' => __DIR__ . '/..' . '/brick/math/src/BigInteger.php',
         'Brick\\Math\\BigNumber' => __DIR__ . '/..' . '/brick/math/src/BigNumber.php',
@@ -812,6 +819,7 @@ class ComposerStaticInit2fb19ee16767dc883e00bd6bd54af521
         'Clue\\Redis\\Protocol\\Serializer\\RecursiveSerializer' => __DIR__ . '/..' . '/clue/redis-protocol/src/Serializer/RecursiveSerializer.php',
         'Clue\\Redis\\Protocol\\Serializer\\SerializerInterface' => __DIR__ . '/..' . '/clue/redis-protocol/src/Serializer/SerializerInterface.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'Console_Table' => __DIR__ . '/..' . '/pear/console_table/Table.php',
         'Cron\\AbstractField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/AbstractField.php',
         'Cron\\CronExpression' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/CronExpression.php',
         'Cron\\DayOfMonthField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/DayOfMonthField.php',
@@ -5706,6 +5714,8 @@ class ComposerStaticInit2fb19ee16767dc883e00bd6bd54af521
         'Ramsey\\Uuid\\UuidInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/UuidInterface.php',
         'Ramsey\\Uuid\\Validator\\GenericValidator' => __DIR__ . '/..' . '/ramsey/uuid/src/Validator/GenericValidator.php',
         'Ramsey\\Uuid\\Validator\\ValidatorInterface' => __DIR__ . '/..' . '/ramsey/uuid/src/Validator/ValidatorInterface.php',
+        'Ratchet\\Client\\Connector' => __DIR__ . '/..' . '/ratchet/pawl/src/Connector.php',
+        'Ratchet\\Client\\WebSocket' => __DIR__ . '/..' . '/ratchet/pawl/src/WebSocket.php',
         'Ratchet\\RFC6455\\Handshake\\ClientNegotiator' => __DIR__ . '/..' . '/ratchet/rfc6455/src/Handshake/ClientNegotiator.php',
         'Ratchet\\RFC6455\\Handshake\\InvalidPermessageDeflateOptionsException' => __DIR__ . '/..' . '/ratchet/rfc6455/src/Handshake/InvalidPermessageDeflateOptionsException.php',
         'Ratchet\\RFC6455\\Handshake\\NegotiatorInterface' => __DIR__ . '/..' . '/ratchet/rfc6455/src/Handshake/NegotiatorInterface.php',

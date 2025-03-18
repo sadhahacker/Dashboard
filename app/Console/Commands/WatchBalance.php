@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use React\Async;
-use Binance;
+use ccxt\binance;
 
 class WatchBalance extends Command
 {
@@ -13,17 +13,35 @@ class WatchBalance extends Command
 
     public function handle()
     {
-        $api = new Binance\API(env('BINANCE_API_KEY'), env('BINANCE_API_SECRET'));
-        $api->httpDebug = true;
-        $api->caOverride = true;
+        ini_set('memory_limit', '512M');
 
-        $balances = $api->balances();
-        dd($balances);
+        $exchange = new binance([
+            'apiKey' => env('BINANCE_API_KEY'),
+            'secret' => env('BINANCE_API_SECRET'),
+            'options' => [
+                'defaultType' => 'future', // For Binance Futures
+            ],
+            'newUpdates' => false, // Optional: disable new updates
+        ]);
 
-        $balance_update = function($api, $balances) {
-            print_r($balances);
-            echo "Balance update".PHP_EOL;
-        };
+        while (true) {
+            $data = $this->formatBalanceDetails($exchange->fetch_balance());
+            broadcast(new \App\Events\Binance($data));
+            sleep(5);
+        }
+    }
+    protected function formatBalanceDetails($data) {
+        if (!isset($data['info']['assets'])) {
+            return [];
+        }
 
+        return array_values(array_filter($data['info']['assets'], function ($asset) {
+            $walletBalance = (float) $asset['walletBalance'];
+            $unrealizedProfit = (float) $asset['unrealizedProfit'];
+            $marginBalance = (float) $asset['marginBalance'];
+
+            // Filter out assets with zero balances
+            return $walletBalance > 0 || $unrealizedProfit > 0 || $marginBalance > 0;
+        }));
     }
 }

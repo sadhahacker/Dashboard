@@ -8,5 +8,5 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 
 
 Broadcast::channel('binance-balance', function () {
-
+    return true;
 });

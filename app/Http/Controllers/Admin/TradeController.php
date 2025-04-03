@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Strategy\MachineLearning;
 use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class TradeController extends Controller
     /**
      * Get markets available on the exchange
      */
-    protected function getMarkets($params = [])
+    public function getMarkets($params = [])
     {
         return $this->exchange->fetch_markets($params);
     }
@@ -26,7 +27,7 @@ class TradeController extends Controller
     /**
      * Get ticker for a symbol
      */
-    protected function getTicker($symbol, $params = [])
+    public function getTicker($symbol, $params = [])
     {
         if ($this->exchange->has['fetchTicker']) {
             return $this->exchange->fetch_ticker($symbol, $params);
@@ -37,7 +38,7 @@ class TradeController extends Controller
     /**
      * Get all tickers
      */
-    protected function getTickers($symbols = null, $params = [])
+    public function getTickers($symbols = null, $params = [])
     {
         if ($this->exchange->has['fetchTickers']) {
             return $this->exchange->fetch_tickers($symbols, $params);
@@ -48,7 +49,7 @@ class TradeController extends Controller
     /**
      * Get order book for a symbol
      */
-    protected function getOrderBook($symbol, $limit = null, $params = [])
+    public function getOrderBook($symbol, $limit = null, $params = [])
     {
         return $this->exchange->fetch_order_book($symbol, $limit, $params);
     }
@@ -56,7 +57,7 @@ class TradeController extends Controller
     /**
      * Get trades for a symbol
      */
-    protected function getTrades($symbol, $since = null, $limit = null, $params = [])
+    public function getTrades($symbol, $since = null, $limit = null, $params = [])
     {
         if ($this->exchange->has['fetchTrades']) {
             return $this->exchange->fetch_trades($symbol, $since, $limit, $params);
@@ -67,7 +68,7 @@ class TradeController extends Controller
     /**
      * Get OHLCV data for a symbol
      */
-    protected function getOHLCV($symbol, $timeframe = '1m', $since = null, $limit = null, $params = [])
+    public function getOHLCV($symbol, $timeframe = '1m', $since = null, $limit = null, $params = [])
     {
         if ($this->exchange->has['fetchOHLCV']) {
             return $this->exchange->fetch_ohlcv($symbol, $timeframe, $since, $limit, $params);
@@ -78,7 +79,7 @@ class TradeController extends Controller
     /**
      * Get user's account balance
      */
-    protected function getBalance($params = [])
+    public function getBalance($params = [])
     {
         return $this->exchange->fetch_balance($params);
     }
@@ -86,7 +87,7 @@ class TradeController extends Controller
     /**
      * Get user's trades
      */
-    protected function getMyTrades($symbol = null, $since = null, $limit = null, $params = [])
+    public function getMyTrades($symbol = null, $since = null, $limit = null, $params = [])
     {
         if ($this->exchange->has['fetchMyTrades']) {
             return $this->exchange->fetch_my_trades($symbol, $since, $limit, $params);
@@ -97,7 +98,7 @@ class TradeController extends Controller
     /**
      * Create a new order
      */
-    protected function createOrder($symbol, $type, $side, $amount, $price = null, $params = [])
+    public function createOrder($symbol, $type, $side, $amount, $price = null, $params = [])
     {
         return $this->exchange->create_order($symbol, $type, $side, $amount, $price, $params);
     }
@@ -105,7 +106,7 @@ class TradeController extends Controller
     /**
      * Cancel an order
      */
-    protected function cancelOrder($id, $symbol = null, $params = [])
+    public function cancelOrder($id, $symbol = null, $params = [])
     {
         if ($this->exchange->has['cancelOrder']) {
             return $this->exchange->cancel_order($id, $symbol, $params);
@@ -116,7 +117,7 @@ class TradeController extends Controller
     /**
      * Get an order status
      */
-    protected function getOrder($id, $symbol = null, $params = [])
+    public function getOrder($id, $symbol = null, $params = [])
     {
         if ($this->exchange->has['fetchOrder']) {
             return $this->exchange->fetch_order($id, $symbol, $params);
@@ -127,7 +128,7 @@ class TradeController extends Controller
     /**
      * Get all open orders
      */
-    protected function getOpenOrders($symbol = null, $since = null, $limit = null, $params = [])
+    public function getOpenOrders($symbol = null, $since = null, $limit = null, $params = [])
     {
         if ($this->exchange->has['fetchOpenOrders']) {
             return $this->exchange->fetch_open_orders($symbol, $since, $limit, $params);
@@ -138,7 +139,7 @@ class TradeController extends Controller
     /**
      * Get all closed orders
      */
-    protected function getClosedOrders($symbol = null, $since = null, $limit = null, $params = [])
+    public function getClosedOrders($symbol = null, $since = null, $limit = null, $params = [])
     {
         if ($this->exchange->has['fetchClosedOrders']) {
             return $this->exchange->fetch_closed_orders($symbol, $since, $limit, $params);
@@ -149,7 +150,7 @@ class TradeController extends Controller
     /**
      * Get deposit address for a currency
      */
-    protected function getDepositAddress($code, $params = [])
+    public function getDepositAddress($code, $params = [])
     {
         if ($this->exchange->has['fetchDepositAddress']) {
             return $this->exchange->fetch_deposit_address($code, $params);
@@ -160,7 +161,7 @@ class TradeController extends Controller
     /**
      * Get deposit history
      */
-    protected function getDeposits($code = null, $since = null, $limit = null, $params = [])
+    public function getDeposits($code = null, $since = null, $limit = null, $params = [])
     {
         if ($this->exchange->has['fetchDeposits']) {
             return $this->exchange->fetch_deposits($code, $since, $limit, $params);
@@ -171,7 +172,7 @@ class TradeController extends Controller
     /**
      * Get withdrawal history
      */
-    protected function getWithdrawals($code = null, $since = null, $limit = null, $params = [])
+    public function getWithdrawals($code = null, $since = null, $limit = null, $params = [])
     {
         if ($this->exchange->has['fetchWithdrawals']) {
             return $this->exchange->fetch_withdrawals($code, $since, $limit, $params);
@@ -182,7 +183,7 @@ class TradeController extends Controller
     /**
      * Transfer funds between accounts
      */
-    protected function transfer($code, $amount, $fromAccount, $toAccount, $params = [])
+    public function transfer($code, $amount, $fromAccount, $toAccount, $params = [])
     {
         if ($this->exchange->has['transfer']) {
             return $this->exchange->transfer($code, $amount, $fromAccount, $toAccount, $params);
@@ -193,7 +194,7 @@ class TradeController extends Controller
     /**
      * Withdraw funds
      */
-    protected function withdraw($code, $amount, $address, $tag = null, $params = [])
+    public function withdraw($code, $amount, $address, $tag = null, $params = [])
     {
         if ($this->exchange->has['withdraw']) {
             return $this->exchange->withdraw($code, $amount, $address, $tag, $params);

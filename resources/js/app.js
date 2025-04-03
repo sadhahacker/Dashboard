@@ -10,3 +10,10 @@ import '../../resources/vendor/overlayScrollbars/js/jquery.overlayScrollbars.min
 import '../../resources/vendor/adminlte/dist/js/adminlte.js'
 
 import axios from 'axios';
+
+import $ from 'jquery';
+
+window.$ = window.jQuery = $;
+
+import DataTable from 'datatables.net-dt';
+

@@ -18,5 +18,10 @@
         "sass": "^1.56.1",
         "tailwindcss": "^4.0.0",
         "vite": "^6.0.11"
+    },
+    "dependencies": {
+        "@mui/x-data-grid": "^7.28.0",
+        "datatables.net-dt": "^2.2.2",
+        "jquery": "^3.7.1"
     }
 }

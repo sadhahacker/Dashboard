@@ -42,3 +42,7 @@ Route::prefix('api/exchange')->middleware(IncreaseMemoryLimit::class)->group(fun
 Route::get('mytrade', function () {
     return view('admin/trade');
 });
+
+
+
+Route::get('test', [TradeController::class, 'calculateTrade'])->middleware(IncreaseMemoryLimit::class);

@@ -15,51 +15,59 @@
         </div>
         <div class="card-body">
             <div class="table-responsive iq-tabel-data">
-                <x-adminlte-datatable id="tradeTable" :heads="['ID', 'Symbol', 'Price', 'Quantity', 'Created At']" head-theme="dark"
-                                      striped hoverable bordered compressed>
-                </x-adminlte-datatable>
+                <table id="tradeTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                </table>
             </div>
         </div>
     </div>
 @stop
 
 @section('css')
+    <style>
+        td:last-child {text-align:center;}
+    </style>
     {{-- Add here extra stylesheets --}}
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
 @stop
 
 @section('js')
-   <script>
-       document.addEventListener('DOMContentLoaded', function () {
-           fetchData();
-       });
-
-       function fetchData() {
-           axios.get("{{ url('api/exchange/mytrades?symbol=BNBUSDT') }}")
-               .then(response => {
-                   const data = response.data.data;
-                   const tableBody = document.querySelector('#tradeTable tbody');
-
-                   console.log(data)
-                   // Clear existing data
-                   tableBody.innerHTML = '';
-
-                   // Populate table with new data
-                   data.forEach(trade => {
-                       const row = `<tr>
-                                    <td>${trade.id}</td>
-                                    <td>${trade.symbol}</td>
-                                    <td>${trade.price}</td>
-                                    <td>${trade.cost}</td>
-                                    <td>${trade.datetime}</td>
-                                </tr>`;
-                       tableBody.innerHTML += row;
-                       console.log(row)
-                   });
-               })
-               .catch(error => {
-                   console.error('Error fetching data:', error);
-               });
-       }
-   </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let table = $('#tradeTable').DataTable({
+                ajax: {
+                    url: "{{ url('api/exchange/mytrades?symbol=BNBUSDT') }}",
+                    dataSrc: function(json) {
+                        $('#custom-loading').parent().parent().remove(); // Remove loading row
+                        return json.data.map(function(trade) {
+                            return [
+                                trade.id,
+                                trade.symbol,
+                                trade.price,
+                                trade.datetime
+                            ];
+                        });
+                    },
+                    beforeSend: function() {
+                        // Loading row is already present.
+                    },
+                    error: function(xhr, error, thrown) {
+                        $('#custom-loading').html("Failed to load trades. Please try again later.");
+                        $('.dataTables_processing').hide();
+                    }
+                },
+                columns: [
+                    { title: "ID" },
+                    { title: "Symbol" },
+                    { title: "Price" },
+                    { title: "Datetime" }
+                ],
+                ordering: true,
+                processing: false, // Disable default DataTable processing indicator
+                serverSide: false, // Disable server-side processing
+                paging: true, // Enable pagination
+                searching: true, // Enable search
+                info: true, // Enable info display
+            });
+        });
+    </script>
 @stop

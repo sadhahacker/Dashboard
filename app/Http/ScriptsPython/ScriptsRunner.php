@@ -51,6 +51,43 @@ class ScriptsRunner
         return ['error' => 'No data found in CSV!'];
     }
 
+    public function isGoodSignal(array $data): bool
+    {
+        $bool = fn($val) => $val === "True" || $val === true;
 
+        // Threshold to decide if prediction supports the signal
+        $prediction = (int) $data['prediction'];
+        $predictionThreshold = 8;
 
+        // Avoid conflicting trends or unstable flips
+        if (
+            $bool($data['isEarlySignalFlip']) ||
+            ($bool($data['isEmaUptrend']) && $bool($data['isEmaDowntrend'])) ||
+            ($bool($data['isSmaUptrend']) && $bool($data['isSmaDowntrend']))
+        ) {
+            return false;
+        }
+
+        // Good Sell Signal
+        if (
+            $bool($data['isNewSellSignal']) &&
+            $bool($data['isEmaDowntrend']) &&
+            $data['signal'] == "-1" &&
+            $prediction <= -$predictionThreshold
+        ) {
+            return true;
+        }
+
+        // Good Buy Signal
+        if (
+            $bool($data['isNewBuySignal']) &&
+            $bool($data['isEmaUptrend']) &&
+            $data['signal'] == "1" &&
+            $prediction >= $predictionThreshold
+        ) {
+            return true;
+        }
+
+        return false;
+    }
 }

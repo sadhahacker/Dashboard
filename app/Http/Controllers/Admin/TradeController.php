@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Admin\Strategy\MachineLearning;
 use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Http\Request;
@@ -61,6 +60,15 @@ class TradeController extends Controller
     {
         if ($this->exchange->has['fetchTrades']) {
             return $this->exchange->fetch_trades($symbol, $since, $limit, $params);
+        }
+        return null;
+    }
+
+
+    public function getPositions($symbol = null, $params = [])
+    {
+        if ($this->exchange->has['fetchPositions']) {
+            return $this->exchange->fetch_positions([$symbol], $params);
         }
         return null;
     }

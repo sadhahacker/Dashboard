@@ -2,6 +2,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Signals;
+use Carbon\Carbon;
 
 class ExecuteTradeController extends Controller {
 
@@ -15,12 +17,17 @@ class ExecuteTradeController extends Controller {
 
     protected $takeProfitFromCoin = 0.023;
 
-    protected $leverage = 10;
+    protected $leverage = 15;
 
     public function __construct() {
         $this->tradeController = new TradeController();
     }
-    public function executeTrade($symbol, $entry_price, $side) {
+    public function executeTrade($symbol, $entry_price, $side, $timestamp = null) {
+        if($this->isOrdersAvailable($symbol) || Carbon::now()->addHour()->lt($timestamp)) {
+            return false; // Orders already exist, do not execute new trade
+        }
+
+        $entry_price = $this->getCorrectEntryPrice($symbol, $entry_price, $side);
         $balance = $this->tradeController->getBalance();
         $this->tradeController->setLeverage($this->leverage);
 
@@ -49,6 +56,15 @@ class ExecuteTradeController extends Controller {
         // Create order (for LIMIT entry)
         $order = $this->tradeController->create_order($symbol, 'limit', $side, $tradeAmount, $entry_price, $params);
 
+        Signals::updateOrCreate([
+            'open_time' => $timestamp,
+        ], [
+            'side' => $side,
+            'entry_price' => $entry_price,
+            'take_profit' => $takeProfitPrice,
+            'stop_loss' => $stopLossPrice,
+        ]);
+
         return $order;
     }
 
@@ -72,4 +88,26 @@ class ExecuteTradeController extends Controller {
         ];
     }
 
+    public function isOrdersAvailable($symbol = 'BNBUSDT')
+    {
+        $positions = $this->tradeController->getPositions($symbol);
+        $orders = $this->tradeController->getOpenOrders($symbol);
+        return !empty($orders) || !empty($positions);
+    }
+
+    public function getCorrectEntryPrice($symbol, $entry_price, $side)
+    {
+        $ticker = $this->tradeController->getTicker($symbol);
+        $current_price = isset($ticker['last']) ? $ticker['last'] : null;
+
+        if ($side === 'buy') {
+            // For LONG, choose lower (better buy)
+            return $current_price <= $entry_price ? $current_price : $entry_price;
+        } elseif ($side === 'sell') {
+            // For SHORT, choose higher (better sell)
+            return $current_price >= $entry_price ? $current_price : $entry_price;
+        } else {
+            throw new \InvalidArgumentException("Invalid side: $side. Must be 'long' or 'short'.");
+        }
+    }
 }

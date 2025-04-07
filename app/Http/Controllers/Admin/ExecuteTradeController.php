@@ -22,50 +22,88 @@ class ExecuteTradeController extends Controller {
     public function __construct() {
         $this->tradeController = new TradeController();
     }
-    public function executeTrade($symbol, $entry_price, $side, $timestamp = null) {
-        if($this->isOrdersAvailable($symbol) || Carbon::now()->addHour()->lt($timestamp)) {
-            return false; // Orders already exist, do not execute new trade
-        }
+    public function executeTrade($symbol, $entry_price, $side, $timestamp = null)
+    {
+//         Skip trade if already in position (optional)
+         if ($this->isOrdersAvailable($symbol)) {
+             return false;
+         }
 
         $entry_price = $this->getCorrectEntryPrice($symbol, $entry_price, $side);
-        $balance = $this->tradeController->getBalance();
-        $this->tradeController->setLeverage($this->leverage);
+        $balance = $this->tradeController->getBalance()['total']['USDT'] ?? 0;
+        $this->tradeController->setLeverage($symbol, $this->leverage);
 
-        // Calculate trade amount based on leverage
-        $tradeAmount = ($balance * $this->leverage) / $entry_price;
-        $tradeAmount = $this->tradeController->amount_to_precision($symbol, $tradeAmount); // Ensure precision
+        // Calculate trade amount with leverage
+        $tradeAmount = ($balance * 10) / $entry_price;
+        $tradeAmount = $this->tradeController->amountToPrecision($symbol, $tradeAmount);
 
-        // Determine Take Profit & Stop Loss prices
+        // Get TP/SL prices
         $TpSl = $this->getTPSLFromCoin($entry_price, $this->takeProfitFromCoin, $this->stoplossFromCoin, $side);
 
-        // Ensure price precision
-        $takeProfitPrice = $this->tradeController->price_to_precision($symbol, $TpSl['takeProfit']);
-        $stopLossPrice = $this->tradeController->price_to_precision($symbol, $TpSl['stopLoss']);
+        $takeProfitPrice = $this->tradeController->priceToPrecision($symbol, $TpSl['takeProfit']);
+        $stopLossPrice   = $this->tradeController->priceToPrecision($symbol, $TpSl['stopLoss']);
 
-        // Order parameters
-        $params = [
-            'stopLoss' => [
-                'triggerPrice' => $stopLossPrice,
+        // Set opposite side for exit orders
+        $exitSide = $side === 'buy' ? 'sell' : 'buy';
+
+        $orders = [
+            // Main entry order
+            [
+                'symbol' => $symbol,
+                'type' => 'limit',
+                'side' => $side,
+                'amount' => $tradeAmount,
+                'price' => $entry_price,
+                'params' => [
+                    'marginMode' => 'isolated',
+                    'timeInForce' => 'GTC',
+                ],
             ],
-            'takeProfit' => [
-                'triggerPrice' => $takeProfitPrice,
+            // Take profit
+            [
+                'symbol' => $symbol,
+                'type' => 'take_profit_market',
+                'side' => $exitSide,
+                'amount' => $tradeAmount,
+                'price' => null,
+                'reduceOnly' => true,
+                'params' => [
+                    'triggerPrice' => $takeProfitPrice,
+                    'marginMode' => 'isolated',
+                ],
             ],
-            'marginMode' => 'isolated'
+            // Stop loss
+            [
+                'symbol' => $symbol,
+                'type' => 'stop_market',
+                'side' => $exitSide,
+                'amount' => $tradeAmount,
+                'price' => null,
+                'reduceOnly' => true,
+                'params' => [
+                    'triggerPrice' => $stopLossPrice,
+                    'marginMode' => 'isolated',
+                ],
+            ],
         ];
 
-        // Create order (for LIMIT entry)
-        $order = $this->tradeController->create_order($symbol, 'limit', $side, $tradeAmount, $entry_price, $params);
+        // Place batch orders (requires CCXT Pro)
+        $response = $this->tradeController->createOrders($orders);
 
+        // Save signal
         Signals::updateOrCreate([
             'open_time' => $timestamp,
         ], [
+            'symbol' => $symbol,
             'side' => $side,
+            'status' => 0,
             'entry_price' => $entry_price,
             'take_profit' => $takeProfitPrice,
             'stop_loss' => $stopLossPrice,
+            'successful' => false,
         ]);
 
-        return $order;
+        return $response;
     }
 
 
@@ -75,11 +113,13 @@ class ExecuteTradeController extends Controller {
         $stopLoss = 0;
 
         if ($side === 'buy') {
-            $takeProfit = $price * (1 + ($tp / 100)); // TP is above entry
-            $stopLoss = $price * (1 - ($sl / 100)); // SL is below entry
+            // For LONG
+            $takeProfit = $price + ($price * $tp);
+            $stopLoss   = $price - ($price * $sl);
         } elseif ($side === 'sell') {
-            $takeProfit = $price * (1 - ($tp / 100)); // TP is below entry
-            $stopLoss = $price * (1 + ($sl / 100)); // SL is above entry
+            // For SHORT
+            $takeProfit = $price - ($price * $tp);
+            $stopLoss   = $price + ($price * $sl);
         }
 
         return [
@@ -100,6 +140,18 @@ class ExecuteTradeController extends Controller {
         $ticker = $this->tradeController->getTicker($symbol);
         $current_price = isset($ticker['last']) ? $ticker['last'] : null;
 
+        if (is_null($current_price)) {
+            throw new \Exception("Unable to fetch current price for {$symbol}");
+        }
+
+        // Calculate the price difference percentage
+        $change_percent = abs($current_price - $entry_price) / $entry_price * 100;
+
+        // Only update if price change is at least 0.1%
+        if ($change_percent < 0.1) {
+            return $entry_price; // Too small to consider updating
+        }
+
         if ($side === 'buy') {
             // For LONG, choose lower (better buy)
             return $current_price <= $entry_price ? $current_price : $entry_price;
@@ -107,7 +159,7 @@ class ExecuteTradeController extends Controller {
             // For SHORT, choose higher (better sell)
             return $current_price >= $entry_price ? $current_price : $entry_price;
         } else {
-            throw new \InvalidArgumentException("Invalid side: $side. Must be 'long' or 'short'.");
+            throw new \InvalidArgumentException("Invalid side: $side. Must be 'buy' or 'sell'.");
         }
     }
 }

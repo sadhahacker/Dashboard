@@ -111,6 +111,11 @@ class TradeController extends Controller
         return $this->exchange->create_order($symbol, $type, $side, $amount, $price, $params);
     }
 
+    public function createOrders($orders, $params = [])
+    {
+        return $this->exchange->create_orders($orders, $params);
+    }
+
     /**
      * Cancel an order
      */
@@ -208,6 +213,24 @@ class TradeController extends Controller
             return $this->exchange->withdraw($code, $amount, $address, $tag, $params);
         }
         return null;
+    }
+
+    public function setLeverage($symbol, $leverage, $params = [])
+    {
+        if ($this->exchange->has['setLeverage']) {
+            return $this->exchange->set_leverage($leverage, $symbol, $params);
+        }
+        return null;
+    }
+
+    public function amountToPrecision($symbol, $amount)
+    {
+        return $this->exchange->amount_to_precision($symbol, $amount);
+    }
+
+    public function priceToPrecision($symbol, $amount)
+    {
+        return $this->exchange->price_to_precision($symbol, $amount);
     }
 
     // API Routes - add Laravel route handlers below

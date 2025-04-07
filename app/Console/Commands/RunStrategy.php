@@ -29,10 +29,11 @@ class RunStrategy extends Command
         ini_set('memory_limit', '512M');
         $scriptRun = new ScriptsRunner();
         $output = $scriptRun->runPythonScript('BNBUSDT', '1m', 1000);
+        $output = $output['success'] ?? [];
         if ($scriptRun->isGoodSignal($output)) {
             $entry = $output['isNewBuySignal'] ? $output['startLongTrade'] : $output['startShortTrade'];
             $side = $output['isNewBuySignal'] ? 'buy' : 'sell';
-            (new ExecuteTradeController())->executeTrade('BNBUSDT', $entry ,$side,$output['timestamp'] );
+            $response = (new ExecuteTradeController())->executeTrade('BNBUSDT', $entry ,$side,$output['timestamp'] );
         }
     }
 }

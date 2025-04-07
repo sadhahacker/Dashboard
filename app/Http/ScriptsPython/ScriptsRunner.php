@@ -11,9 +11,10 @@ class ScriptsRunner
     public function runPythonScript($symbol, $interval, $limit)
     {
         // Determine the correct Python executable based on OS
-        $pythonExecutable = base_path('app/Http/ScriptsPython/advanced-ta/.venv/Scripts/python.exe'); // Windows
-        if (PHP_OS_FAMILY === 'Linux' || PHP_OS_FAMILY === 'Darwin') {
-            $pythonExecutable = base_path('app/Http/ScriptsPython/advanced-ta/.venv/bin/python3'); // Linux/macOS
+        if (PHP_OS_FAMILY === 'Windows') {
+            $pythonExecutable = base_path('app/Http/ScriptsPython/advanced-ta/.venv/Scripts/python.exe'); // Windows
+        }else{
+            $pythonExecutable = 'python3'; // Linux
         }
 
         $scriptPath = base_path('app/Http/ScriptsPython/advanced-ta/app/controller/lorentzian.py');

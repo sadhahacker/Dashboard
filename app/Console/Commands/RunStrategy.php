@@ -29,7 +29,7 @@ class RunStrategy extends Command
         \Cache::put('isRunning', true, 60);
         ini_set('memory_limit', '512M');
         $scriptRun = new ScriptsRunner();
-        $output = $scriptRun->runPythonScript('BNBUSDT', '1m', 1000);
+        $output = $scriptRun->runPythonScript('BNBUSDT', '1h', 1000);
         $output = $output['success'] ?? [];
         if ($scriptRun->isGoodSignal($output)) {
             $entry = $output['isNewBuySignal'] ? $output['startLongTrade'] : $output['startShortTrade'];

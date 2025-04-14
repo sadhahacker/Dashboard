@@ -38,6 +38,13 @@ Route::prefix('api/exchange')->middleware(IncreaseMemoryLimit::class)->group(fun
     });
 });
 
+Route::get('isBotRunning', function (){
+    $isRunning = Cache::has('isRunning') ? Cache::get('isRunning') : false;
+    return response()->json([
+        'isRunning' => $isRunning,
+    ]);
+});
+
 
 Route::get('mytrade', function () {
     return view('admin/trade');

@@ -26,6 +26,7 @@ class RunStrategy extends Command
     protected $description = 'Run the trading strategy';
 
     public function handle(){
+        \Cache::put('isRunning', true, 60);
         ini_set('memory_limit', '512M');
         $scriptRun = new ScriptsRunner();
         $output = $scriptRun->runPythonScript('BNBUSDT', '1m', 1000);

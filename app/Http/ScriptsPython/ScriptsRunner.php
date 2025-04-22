@@ -14,7 +14,7 @@ class ScriptsRunner
         if (PHP_OS_FAMILY === 'Windows') {
             $pythonExecutable = base_path('app/Http/ScriptsPython/advanced-ta/.venv/Scripts/python.exe'); // Windows
         }else{
-            $pythonExecutable = 'python3'; // Linux
+            $pythonExecutable = base_path('app/Http/ScriptsPython/advanced-ta/.venv/bin/python3');
         }
 
         $scriptPath = base_path('app/Http/ScriptsPython/advanced-ta/app/controller/lorentzian.py');
